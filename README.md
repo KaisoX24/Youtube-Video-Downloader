@@ -102,7 +102,7 @@ yt-dlp
 **Pramit Acharjya**  
 ✨ Passionate about AI, automation, and building practical tools.  
 
-📺 YouTube: [Kaiso Gaming & Tech](https://www.youtube.com/@kaisogamingandtech)  
+📺 YouTube: [Kaiso Gaming & Tech](https://www.youtube.com/@KaisoGaming_AT)  
 💻 GitHub: [@KaisoX24](https://github.com/KaisoX24)
 
 ---
