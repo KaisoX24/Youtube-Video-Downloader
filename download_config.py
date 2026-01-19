@@ -1,20 +1,26 @@
-import streamlit as st
 import yt_dlp
 import os
+import streamlit as st 
 
-def download_youtube_video(url,output_path='downloads'):
+# --- Modified download function ---
+def download_youtube_video(url, output_path="downloads"):
     if not os.path.exists(output_path):
         os.makedirs(output_path)
-
-    final_filepath=None
-
+    
+    final_filepath = None 
+    
+    # yt_dlp options
     ydl_opts = {
-        'format': 'best',
-        'outtmpl': f'{output_path}/%(title)s.%(ext)s', 
+        'format': 'bestvideo+bestaudio/best',
+        'merge_output_format': 'mp4',
+        'outtmpl': f'{output_path}/%(title)s.%(ext)s',
         'noplaylist': True,
-        'writedescription': False, 
-        'noprogress': False,    
-        'quiet': True,       
+        'writedescription': False,
+
+        # 🔴 IMPORTANT CHANGES
+        'verbose': True,     # enable full debug output
+        'quiet': False,      
+        'noprogress': False,
     }
 
     try:
@@ -23,12 +29,13 @@ def download_youtube_video(url,output_path='downloads'):
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info_dict = ydl.extract_info(url, download=True)
                 final_filepath = ydl.prepare_filename(info_dict)
+
         st.success("Download complete on the server.")
         return final_filepath
+    
     except yt_dlp.utils.DownloadError as de:
-        st.error(de)
+        st.error(f"Download error: {str(de)}")
         return None
     except Exception as e:
-        st.error(e)
+        st.error(f"An error occurred: {str(e)}")
         return None
-    
