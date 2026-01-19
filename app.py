@@ -1,32 +1,34 @@
 import streamlit as st
-from download_config import download_youtube_video
+from download import download_youtube_video
 import os
 
-st.set_page_config(page_title='Youtube Video Downloader',page_icon='📼',layout='wide')
-st.title('Youtube Video Downloader')
-st.caption('Enter the URl in the sidebar and press the button')
+st.title("📹 Streamlit Video Downloader")
 
-video_url=st.sidebar.text_input('Enter the video url:')
-button=st.sidebar.button('Start Download')
+video_url = st.sidebar.text_input("Enter the YouTube video URL:", "")
+button = st.sidebar.button("Start Download")
+
+# Session state to persist file
+if "downloaded_file_path" not in st.session_state:
+    st.session_state.downloaded_file_path = None
+
 if video_url and button:
-    download_file_path=download_youtube_video(video_url)
-    if download_file_path:
-        try:
-            with open(download_file_path,'rb')as f:
-                video_bytes=f.read()
+    st.session_state.downloaded_file_path = download_youtube_video(video_url)
 
-            file_names=os.path.basename(download_file_path)
+# Only show download button if file exists
+if st.session_state.downloaded_file_path and os.path.exists(st.session_state.downloaded_file_path):
+    with open(st.session_state.downloaded_file_path, "rb") as f:
+        video_bytes = f.read()
 
-            st.download_button(
-                label='Click to Download the video',
-                data=video_bytes,
-                file_name=file_names,
-                mime='video/mp4'
-            )
-            st.success('Downloaded Video Successfully')
-            os.remove(download_file_path)
-        except Exception as e:
-            st.error(f'Could prepare the file {e}')
+    file_name = os.path.basename(st.session_state.downloaded_file_path)
 
-else:
-    st.warning('Please Enter the Url')
+    if st.download_button(
+        label="💾 Click to Download Video",
+        data=video_bytes,
+        file_name=file_name,
+        mime="video/mp4"
+    ):
+        # ✅ delete AFTER user downloads
+        os.remove(st.session_state.downloaded_file_path)
+        st.session_state.downloaded_file_path = None
+        st.success("✅ Download completed and file cleaned up.")
+
