@@ -1,38 +1,56 @@
 import yt_dlp
 import os
-import streamlit as st 
+import streamlit as st
 
-# --- Modified download function ---
-def download_youtube_video(url, output_path="downloads"):
+def download_youtube_video(url, file_type, output_path="downloads"):
     if not os.path.exists(output_path):
         os.makedirs(output_path)
-    
-    final_filepath = None 
-    
-    # yt_dlp options
+
+    final_filepath = None
+
+    # ---- base options ----
     ydl_opts = {
-        'format': 'bestvideo+bestaudio/best',
-        'merge_output_format': 'mp4',
         'outtmpl': f'{output_path}/%(title)s.%(ext)s',
         'noplaylist': True,
         'writedescription': False,
-
-        # 🔴 IMPORTANT CHANGES
-        'verbose': True,     # enable full debug output
-        'quiet': False,      
+        'verbose': True,
+        'quiet': False,
         'noprogress': False,
     }
 
+    # ---- pipeline switch ----
+    if file_type == "mp4":
+        ydl_opts.update({
+            'format': 'bestvideo+bestaudio/best',
+            'merge_output_format': 'mp4',
+        })
+
+    elif file_type == "mp3":
+        ydl_opts.update({
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }],
+        })
+
     try:
         st.info(f"Currently given URL: {url}")
-        with st.spinner('Downloading the video'):
+        with st.spinner('Downloading...'):
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info_dict = ydl.extract_info(url, download=True)
-                final_filepath = ydl.prepare_filename(info_dict)
+
+                base_filename = ydl.prepare_filename(info_dict)
+
+                if file_type == "mp3":
+                    final_filepath = os.path.splitext(base_filename)[0] + ".mp3"
+                else:
+                    final_filepath = base_filename
 
         st.success("Download complete on the server.")
         return final_filepath
-    
+
     except yt_dlp.utils.DownloadError as de:
         st.error(f"Download error: {str(de)}")
         return None
