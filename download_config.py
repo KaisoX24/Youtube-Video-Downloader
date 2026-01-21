@@ -1,6 +1,7 @@
 import yt_dlp
 import os
 import streamlit as st
+import ffmpeg
 
 def download_youtube_video(url, file_type, output_path="downloads"):
     if not os.path.exists(output_path):
@@ -57,3 +58,28 @@ def download_youtube_video(url, file_type, output_path="downloads"):
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
         return None
+
+import ffmpeg
+import os
+
+def convert_mp4_to_mp3(input_file):
+    """
+    Convert a video (.mp4) to mp3 audio using ffmpeg-python.
+    Returns the output mp3 path.
+    Requires FFmpeg installed on the system.
+    """
+
+    if not os.path.exists(input_file):
+        raise FileNotFoundError("Input file does not exist")
+
+    base, _ = os.path.splitext(input_file)
+    output_file = base + ".mp3"
+
+    (
+        ffmpeg
+        .input(input_file)
+        .output(output_file, acodec="mp3")
+        .run()
+    )
+
+    return output_file
