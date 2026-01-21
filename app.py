@@ -1,5 +1,5 @@
 import streamlit as st
-from download import download_youtube_video
+from download_config import download_youtube_video,convert_mp4_to_mp3
 import os
 
 st.title("📹 Streamlit Video Downloader")
@@ -30,6 +30,23 @@ if choice == 'Youtube Files':
         st.session_state.downloaded_file_path = download_youtube_video(
             video_url, output_format
         )
+elif choice == 'Video Files':
+    uploaded_file = st.sidebar.file_uploader("Upload Your video file:",type=['mp4', 'mkv'])
+    st.session_state.mime_type = "audio/mpeg"
+
+    if uploaded_file is not None:
+        temp_input_path = os.path.join(
+            "uploads",
+            uploaded_file.name
+        )
+        os.makedirs("uploads", exist_ok=True)
+        with open(temp_input_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        # ---- convert ----
+        st.session_state.downloaded_file_path = convert_mp4_to_mp3(
+            temp_input_path
+        )
+        os.remove(temp_input_path)
 
 # ---- render download ----
 if (
@@ -41,7 +58,6 @@ if (
 
     file_name = os.path.basename(st.session_state.downloaded_file_path)
 
-    # deterministic cleanup
     os.remove(st.session_state.downloaded_file_path)
     st.session_state.downloaded_file_path = None
 
@@ -51,3 +67,4 @@ if (
         file_name=file_name,
         mime=st.session_state.mime_type
     )
+
