@@ -107,42 +107,6 @@ Then open the link displayed in the terminal (usually `http://localhost:8501`) i
 
 ---
 
-## 📂 Project Structure
-
-```
-📁 youtube-video-downloader
- ┣ 📜 app.py
- ┣ 📜 download_config.py
- ┣ 📜 requirements.txt
- ┣ 📁 downloads/
- ┗ 📜 README.md
-```
-
----
-
-## 📦 Requirements
-
-- Python 3.8 or higher  
-- Streamlit  
-- yt-dlp  
-- FFmpeg (system dependency)
-
-### Example `requirements.txt`
-```
-streamlit
-yt-dlp
-```
-
----
-
-## ⚠️ Disclaimer
-
-> This project is intended **for educational purposes only**.  
-> Please ensure you comply with YouTube’s Terms of Service.  
-> Do **not** use this tool to download copyrighted content without permission.
-
----
-
 ## 🧑‍💻 Author
 
 **Pramit Acharjya**  
